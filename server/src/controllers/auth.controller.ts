@@ -46,9 +46,7 @@ export const signup = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       message:
-        error instanceof Error
-          ? "Signup error: " + error.message
-          : "An unknown error occurred.",
+        error instanceof Error ? error.message : "An unknown error occurred.",
     });
   }
 };
@@ -76,9 +74,7 @@ export const login = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       message:
-        error instanceof Error
-          ? "Signup error: " + error.message
-          : "An unknown error occurred.",
+        error instanceof Error ? error.message : "An unknown error occurred.",
     });
   }
 };
@@ -90,9 +86,22 @@ export const logout = (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       message:
-        error instanceof Error
-          ? "Signup error: " + error.message
-          : "An unknown error occurred.",
+        error instanceof Error ? error.message : "An unknown error occurred.",
+    });
+  }
+};
+
+export const updateAvatar = async (req: Request, res: Response) => {
+  const { userId, avatar } = req.body;
+};
+
+export const checkAuth = (req: Request, res: Response) => {
+  try {
+    res.status(200).json(req.body);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred.",
     });
   }
 };
