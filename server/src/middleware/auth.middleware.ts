@@ -10,24 +10,28 @@ export const protectRoute = async (
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized access." });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized - No token provided." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "") as {
       userId: string;
     };
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized - Invalid token." });
+    }
 
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized access2." });
+      return res.status(401).json({ message: "User not found." });
     }
 
     req.body = user;
     next();
-  } catch (error) {
+  } catch (e) {
     res.status(500).json({
-      message:
-        error instanceof Error ? error.message : "An unknown error occurred.",
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
     });
   }
 };

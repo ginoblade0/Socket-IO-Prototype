@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 import User from "../models/user.model";
 import { generateToken } from "../lib/utils";
+import cloudinary from "../lib/cloudinary";
 
 export const signup = async (req: Request, res: Response) => {
   const { name, email, password, avatar } = req.body;
@@ -43,10 +44,9 @@ export const signup = async (req: Request, res: Response) => {
     } else {
       res.status(400).json({ message: "Invalid user data." });
     }
-  } catch (error) {
+  } catch (e) {
     res.status(500).json({
-      message:
-        error instanceof Error ? error.message : "An unknown error occurred.",
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
     });
   }
 };
@@ -71,10 +71,9 @@ export const login = async (req: Request, res: Response) => {
       email: user.email,
       avatar: user.avatar,
     });
-  } catch (error) {
+  } catch (e) {
     res.status(500).json({
-      message:
-        error instanceof Error ? error.message : "An unknown error occurred.",
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
     });
   }
 };
@@ -83,25 +82,41 @@ export const logout = (req: Request, res: Response) => {
   try {
     res.clearCookie("token");
     res.status(200).json({ message: "Logged out successfully." });
-  } catch (error) {
+  } catch (e) {
     res.status(500).json({
-      message:
-        error instanceof Error ? error.message : "An unknown error occurred.",
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
     });
   }
 };
 
 export const updateAvatar = async (req: Request, res: Response) => {
-  const { userId, avatar } = req.body;
+  try {
+    const { avatar } = req.body;
+    if (!avatar) {
+      return res.status(400).json({ message: "Image is required." });
+    }
+
+    const userId = req.body._id;
+    const uploadResponse = await cloudinary.uploader.upload(avatar);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { avatar: uploadResponse.secure_url },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (e) {
+    res.status(500).json({
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
+    });
+  }
 };
 
 export const checkAuth = (req: Request, res: Response) => {
   try {
     res.status(200).json(req.body);
-  } catch (error) {
+  } catch (e) {
     res.status(500).json({
-      message:
-        error instanceof Error ? error.message : "An unknown error occurred.",
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
     });
   }
 };
