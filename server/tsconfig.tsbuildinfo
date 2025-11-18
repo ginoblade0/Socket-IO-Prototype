@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.9.3"}
+{"root":["./src/index.ts","./src/controllers/auth.controller.ts","./src/controllers/message.controller.ts","./src/lib/cloudinary.ts","./src/lib/db.ts","./src/lib/utils.ts","./src/middleware/auth.middleware.ts","./src/models/message.model.ts","./src/models/user.model.ts","./src/routes/auth.route.ts","./src/routes/message.route.ts"],"version":"5.9.3"}
