@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, KeyRound, Mail, MessageSquare, User } from "lucide-react";
 
-import type { SignUpData } from "../types/SignUpData";
+import type { SignUpData } from "../types/formData";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImageSide from "../components/AuthImageSide";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState<boolean>();
   const [signUpData, setSignUpData] = useState<SignUpData>({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -56,9 +56,9 @@ const SignUp = () => {
                   minLength={3}
                   maxLength={30}
                   title="Must not contain any special characters."
-                  value={signUpData.name}
+                  value={signUpData.username}
                   onChange={(e) =>
-                    setSignUpData({ ...signUpData, name: e.target.value })
+                    setSignUpData({ ...signUpData, username: e.target.value })
                   }
                 />
               </label>

@@ -2,10 +2,12 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
-import type { SignUpData, LoginData } from "../types/SignUpData";
+import type { AuthUser } from "../types/authUser";
+import type { LoginData, SignUpData } from "../types/formData";
 
 interface AuthState {
-  isAuthenticated: null | boolean;
+  authUser: AuthUser;
+  isAuthenticated: boolean;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isUpdatingProfile: boolean;
@@ -14,10 +16,17 @@ interface AuthState {
   signup: (data: SignUpData) => Promise<void>;
   login: (data: LoginData) => Promise<void>;
   logout: () => Promise<void>;
+  updateAvatar: (avatarFile: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
-  isAuthenticated: null,
+  authUser: {
+    _id: null,
+    username: "",
+    email: "",
+    avatar: "",
+  },
+  isAuthenticated: false,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
@@ -26,9 +35,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ isAuthenticated: res.data });
+      set({ isAuthenticated: true, authUser: res.data });
     } catch (e) {
-      set({ isAuthenticated: null });
+      // set({ isAuthenticated: null });
+      console.log(e instanceof Error ? e.message : "Auth check failed.");
     } finally {
       set({ isCheckingAuth: false });
     }
@@ -39,7 +49,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
     try {
       const res = await axiosInstance.post("/auth/signup", data);
       toast.success("Account created successfully!");
-      set({ isAuthenticated: true });
+      set({ isAuthenticated: true, authUser: res.data });
     } catch (e) {
       set({ isAuthenticated: false });
       toast.error(e instanceof Error ? e.message : "Signup failed.");
@@ -52,7 +62,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      set({ isAuthenticated: true });
+      set({ isAuthenticated: true, authUser: res.data });
       toast.success("Logged in successfully.");
     } catch (e) {
       set({ isAuthenticated: false });
@@ -69,6 +79,24 @@ export const useAuthStore = create<AuthState>()((set) => ({
       toast.success("Logged out successfully.");
     } catch (e) {
       toast.error("Failed to logout.");
+    }
+  },
+
+  updateAvatar: async (avatarFile: string) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const formData = new FormData();
+      formData.append("avatar", avatarFile);
+      await axiosInstance.put("/user/avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      toast.success("Avatar updated successfully.");
+    } catch (e) {
+      toast.error("Failed to update avatar.");
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));
