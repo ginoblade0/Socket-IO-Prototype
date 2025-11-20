@@ -1,4 +1,4 @@
-// import React from "react";
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 
@@ -8,7 +8,6 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
-import { useEffect } from "react";
 
 const App = () => {
   const { isAuthenticated, checkAuth, isCheckingAuth } = useAuthStore();
@@ -17,7 +16,7 @@ const App = () => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log(isAuthenticated);
+  // console.log(isAuthenticated);
 
   if (isCheckingAuth && !isAuthenticated)
     return (

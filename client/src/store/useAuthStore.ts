@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
-import type { SignUpData } from "../types/SignUpData";
-
-type LoginData = Pick<SignUpData, "email" | "password">;
+import type { SignUpData, LoginData } from "../types/SignUpData";
 
 interface AuthState {
   isAuthenticated: null | boolean;
@@ -12,7 +10,7 @@ interface AuthState {
   isCheckingAuth: boolean;
   checkAuth: () => Promise<void>;
   signup: (data: SignUpData) => Promise<void>;
-//   login: (data: LoginData) => Promise<void>;
+  //   login: (data: LoginData) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -45,15 +43,15 @@ export const useAuthStore = create<AuthState>()((set) => ({
     }
   },
 
-//   login: async (data: LoginData) => {
-//     set({ isLoggingIn: true });
-//     try {
-//       await axiosInstance.post("/auth/login", data);
-//       set({ isAuthenticated: true });
-//     } catch (e) {
-//       set({ isAuthenticated: false });
-//     } finally {
-//       set({ isLoggingIn: false });
-//     }
-//   },
+  //   login: async (data: LoginData) => {
+  //     set({ isLoggingIn: true });
+  //     try {
+  //       await axiosInstance.post("/auth/login", data);
+  //       set({ isAuthenticated: true });
+  //     } catch (e) {
+  //       set({ isAuthenticated: false });
+  //     } finally {
+  //       set({ isLoggingIn: false });
+  //     }
+  //   },
 }));
