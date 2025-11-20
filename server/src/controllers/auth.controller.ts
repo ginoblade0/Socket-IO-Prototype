@@ -6,9 +6,9 @@ import { generateToken } from "../lib/utils";
 import cloudinary from "../lib/cloudinary";
 
 export const signup = async (req: Request, res: Response) => {
-  const { name, email, password, avatar } = req.body;
+  const { username, email, password, avatar } = req.body;
   try {
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -26,7 +26,7 @@ export const signup = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
     const newUser = new User({
-      name: name,
+      username: username,
       email: email,
       password: hash,
       avatar: avatar,
@@ -37,7 +37,7 @@ export const signup = async (req: Request, res: Response) => {
 
       res.status(201).json({
         _id: newUser.id,
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email,
         avatar: newUser.avatar,
       });
@@ -67,7 +67,7 @@ export const login = async (req: Request, res: Response) => {
     generateToken(user._id, res);
     res.status(200).json({
       _id: user.id,
-      name: user.name,
+      username: user.username,
       email: user.email,
       avatar: user.avatar,
     });
