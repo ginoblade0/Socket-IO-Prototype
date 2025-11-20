@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "./store/useAuthStore";
+import { Toaster } from "react-hot-toast";
 
+import { useAuthStore } from "./store/useAuthStore";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -47,6 +48,8 @@ const App = () => {
           element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
         />
       </Routes>
+
+      <Toaster />
     </div>
   );
 };

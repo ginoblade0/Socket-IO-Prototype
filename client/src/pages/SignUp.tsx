@@ -16,15 +16,9 @@ const SignUp = () => {
 
   const { signup, isSigningUp } = useAuthStore();
 
-  const validateForm = () => {
-    // Add form validation logic here
-    return true;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (!validateForm()) return;
-    // await signup(formData);
+    signup(signUpData);
   };
 
   return (
@@ -140,10 +134,13 @@ const SignUp = () => {
             <div className="px-12 mt-8">
               <button
                 type="submit"
-                className={`btn w-full ${isSigningUp ? "loading" : ""}`}
+                className={`btn w-full`}
                 disabled={isSigningUp}
               >
-                {isSigningUp ? "Creating Account..." : "Create Account"}
+                {isSigningUp ? "" : "Create Account"}
+                <span
+                  className={isSigningUp ? "loading loading-spinner" : ""}
+                />
               </button>
             </div>
           </form>
