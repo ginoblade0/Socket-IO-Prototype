@@ -16,7 +16,7 @@ interface AuthState {
   signup: (data: SignUpData) => Promise<void>;
   login: (data: LoginData) => Promise<void>;
   logout: () => Promise<void>;
-  updateAvatar: (avatarFile: string) => Promise<void>;
+  updateAvatar: (data: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -25,6 +25,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
     username: "",
     email: "",
     avatar: "",
+    createdAt: "",
   },
   isAuthenticated: false,
   isSigningUp: false,
@@ -82,18 +83,19 @@ export const useAuthStore = create<AuthState>()((set) => ({
     }
   },
 
-  updateAvatar: async (avatarFile: string) => {
+  updateAvatar: async (data: string) => {
     set({ isUpdatingProfile: true });
     try {
-      const formData = new FormData();
-      formData.append("avatar", avatarFile);
-      await axiosInstance.put("/user/avatar", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      // const res = await axiosInstance.put("/auth/update-avatar", data);
+      const res = await axiosInstance.get("/auth/update-avatar", {
+        params: {
+          avatar: data,
         },
       });
+      set({ authUser: res.data });
       toast.success("Avatar updated successfully.");
     } catch (e) {
+      console.log(e instanceof Error ? e : "An unknown error occurred.");
       toast.error("Failed to update avatar.");
     } finally {
       set({ isUpdatingProfile: false });
