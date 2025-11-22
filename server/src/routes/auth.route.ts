@@ -13,7 +13,7 @@ const router = Router();
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
-router.put("/update-avatar", protectRoute, updateAvatar);
+router.get("/update-avatar", protectRoute, updateAvatar);
 router.get("/check", protectRoute, checkAuth);
 
 export default router;

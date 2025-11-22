@@ -91,13 +91,13 @@ export const logout = (req: Request, res: Response) => {
 
 export const updateAvatar = async (req: Request, res: Response) => {
   try {
-    const { avatar } = req.body;
+    const { avatar } = req.query;
     if (!avatar) {
-      return res.status(400).json({ message: "Image is required." });
+      return res.status(400).json({ message: "Image is required!" });
     }
 
     const userId = req.body._id;
-    const uploadResponse = await cloudinary.uploader.upload(avatar);
+    const uploadResponse = await cloudinary.uploader.upload(avatar as string);
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatar: uploadResponse.secure_url },
