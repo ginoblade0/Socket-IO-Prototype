@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model";
 import { generateToken } from "../lib/utils";
 import cloudinary from "../lib/cloudinary";
+import { ExpressRequest } from "../types/express";
 
 export const signup = async (req: Request, res: Response) => {
   const { username, email, password, avatar } = req.body;
@@ -89,15 +90,19 @@ export const logout = (req: Request, res: Response) => {
   }
 };
 
-export const updateAvatar = async (req: Request, res: Response) => {
+export const updateAvatar = async (req: ExpressRequest, res: Response) => {
   try {
-    const { avatar } = req.query;
+    const { avatar } = req.body;
     if (!avatar) {
       return res.status(400).json({ message: "Image is required!" });
     }
 
-    const userId = req.body._id;
-    const uploadResponse = await cloudinary.uploader.upload(avatar as string);
+    const userId = req.user._id;
+    const uploadResponse = await cloudinary.uploader.upload(avatar, {
+      transformation: [
+        { width: 250, height: 250, crop: "fill", gravity: "faces" },
+      ],
+    });
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatar: uploadResponse.secure_url },
@@ -111,9 +116,9 @@ export const updateAvatar = async (req: Request, res: Response) => {
   }
 };
 
-export const checkAuth = (req: Request, res: Response) => {
+export const checkAuth = (req: ExpressRequest, res: Response) => {
   try {
-    res.status(200).json(req.body);
+    res.status(200).json(req.user);
   } catch (e) {
     res.status(500).json({
       message: e instanceof Error ? e.message : "An unknown error occurred.",

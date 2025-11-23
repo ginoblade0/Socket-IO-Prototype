@@ -86,11 +86,8 @@ export const useAuthStore = create<AuthState>()((set) => ({
   updateAvatar: async (data: string) => {
     set({ isUpdatingProfile: true });
     try {
-      // const res = await axiosInstance.put("/auth/update-avatar", data);
-      const res = await axiosInstance.get("/auth/update-avatar", {
-        params: {
-          avatar: data,
-        },
+      const res = await axiosInstance.put("/auth/update-avatar", {
+        avatar: data,
       });
       set({ authUser: res.data });
       toast.success("Avatar updated successfully.");

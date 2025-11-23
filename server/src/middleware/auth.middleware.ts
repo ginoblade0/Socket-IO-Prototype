@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+
+import { ExpressRequest } from "../types/express";
 
 export const protectRoute = async (
-  req: Request,
+  req: ExpressRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -27,7 +29,7 @@ export const protectRoute = async (
       return res.status(401).json({ message: "User not found." });
     }
 
-    req.body = user;
+    req.user = user;
     next();
   } catch (e) {
     res.status(500).json({
