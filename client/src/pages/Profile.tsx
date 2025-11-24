@@ -1,39 +1,35 @@
-import { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
-
 import { Camera, Mail, User } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const Profile = () => {
   const { authUser, isUpdatingProfile, updateAvatar } = useAuthStore();
-  const [selectedImage, setSelectedImage] = useState<string>("");
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      if (!file) return;
+  const handleImageUpload = async (e: React.FormEvent) => {
+    const file = e.target as HTMLInputElement;
+    if (file.files && file.files.length > 0) {
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file.files[0]);
       reader.onload = async () => {
         const data: string = reader.result as string;
-        setSelectedImage(data);
         await updateAvatar(data);
+        window.location.reload();
       };
     }
   };
 
   return (
     <div className="h-screen max-w-2xl mx-auto p-4 py-8 pt-25">
-      <div className="bg-base-300 p-12">
+      <div className="bg-base-300 rounded-2xl p-12">
         <div className="text-center py-6">
           <h1 className="text-2xl font-bold mb-4">Profile</h1>
           <p className="mb-6 text-base-content/70">
             Manage your profile information
           </p>
           <div className="flex flex-col items-center gap-4">
-            <div className="relative">
+            <div className="relative rounded-full bg-black">
               <img
                 className="size-32 rounded-full border-4"
-                src={selectedImage || authUser.avatar || "avatar.png"}
+                src={authUser.avatar || "avatar.png"}
                 alt="Profile"
               ></img>
               <label

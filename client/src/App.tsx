@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { useAuthStore } from "./store/useAuthStore";
+import { useThemeStore } from "./store/useThemeStore";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -12,6 +13,7 @@ import Profile from "./pages/Profile";
 
 const App = () => {
   const { isAuthenticated, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     checkAuth();
@@ -25,7 +27,7 @@ const App = () => {
     );
 
   return (
-    <div>
+    <div className="overflow-x-hidden" data-theme={theme}>
       <Navbar />
       <Routes>
         <Route
@@ -46,7 +48,6 @@ const App = () => {
           element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
         />
       </Routes>
-
       <Toaster />
     </div>
   );
