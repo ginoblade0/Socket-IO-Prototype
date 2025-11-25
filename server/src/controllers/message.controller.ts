@@ -3,10 +3,11 @@ import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.model";
 import Message from "../models/message.model";
+import { ExpressRequest } from "../types/express";
 
-export const getUsersForSidebar = async (req: Request, res: Response) => {
+export const getUsersForSidebar = async (req: ExpressRequest, res: Response) => {
   try {
-    const loggedInUserId = req.body._id;
+    const loggedInUserId = req.user._id;
 
     const filteredUsers = await User.find({
       _id: { $ne: loggedInUserId },
