@@ -5,3 +5,5 @@ export interface AuthUser {
   avatar: string;
   createdAt: string;
 }
+
+export type Contact = Pick<AuthUser, "_id" | "username" | "avatar">;

@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
-import type { AuthUser } from "../types/authUser";
-import type { LoginData, SignUpData } from "../types/formData";
+import type { AuthUser, Contact } from "../types/auth-user";
+import type { LoginData, SignUpData } from "../types/form-data";
 
 interface AuthState {
   authUser: AuthUser;
@@ -12,7 +12,7 @@ interface AuthState {
   isLoggingIn: boolean;
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
-  onlineUsers: any[];
+  onlineUsers: Contact[];
   checkAuth: () => Promise<void>;
   signup: (data: SignUpData) => Promise<void>;
   login: (data: LoginData) => Promise<void>;

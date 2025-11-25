@@ -21,9 +21,9 @@ export const getUsersForSidebar = async (req: ExpressRequest, res: Response) => 
   }
 };
 
-export const getMessages = async (req: Request, res: Response) => {
+export const getMessages = async (req: ExpressRequest, res: Response) => {
   try {
-    const loggedInUserId = req.body._id;
+    const loggedInUserId = req.user._id;
     const recipientId = req.params.id;
 
     const messages = await Message.find({
@@ -41,9 +41,9 @@ export const getMessages = async (req: Request, res: Response) => {
   }
 };
 
-export const sendMessages = async (req: Request, res: Response) => {
+export const sendMessages = async (req: ExpressRequest, res: Response) => {
   try {
-    const loggedInUserId = req.body._id;
+    const loggedInUserId = req.user._id;
     const recipientId = req.params.id;
     const { text, image } = req.body;
 

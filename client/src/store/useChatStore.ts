@@ -1,16 +1,17 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
+import type { Contact } from "../types/auth-user";
 
 interface ChatState {
   messages: any[];
-  users: any[];
-  selectedUser: any;
+  users: Contact[];
+  selectedUser: Contact | null;
   isUsersLoading: boolean;
   isMessagesLoading: boolean;
   getUsers: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
-  setSelectedUser: (selectedUser: any) => void;
+  setSelectedUser: (selectedUser: Contact | null) => void;
 }
 
 export const useChatStore = create<ChatState>()((set) => ({
@@ -44,10 +45,5 @@ export const useChatStore = create<ChatState>()((set) => ({
     }
   },
 
-  setSelectedUser: (selectedUser: any) =>
-    set({
-      // try {
-      // } catch (error) {
-      // }
-    }),
+  setSelectedUser: (selectedUser: Contact | null) => set({ selectedUser }),
 }));

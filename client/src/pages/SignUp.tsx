@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, KeyRound, Mail, MessageSquare, User } from "lucide-react";
 
-import type { SignUpData } from "../types/formData";
+import type { SignUpData } from "../types/form-data";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImageSide from "../components/AuthImageSide";
 
