@@ -4,8 +4,12 @@ import { v2 as cloudinary } from "cloudinary";
 import User from "../models/user.model";
 import Message from "../models/message.model";
 import { ExpressRequest } from "../types/express";
+import { io, getReceiverSocketId } from "../lib/socket";
 
-export const getUsersForSidebar = async (req: ExpressRequest, res: Response) => {
+export const getUsersForSidebar = async (
+  req: ExpressRequest,
+  res: Response
+) => {
   try {
     const loggedInUserId = req.user._id;
 
@@ -61,7 +65,11 @@ export const sendMessages = async (req: ExpressRequest, res: Response) => {
     });
 
     await newMessage.save();
-    // socket io code to emit the new message event can be added here
+
+    const receiverSocketId = getReceiverSocketId(recipientId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     res.status(201).json(newMessage);
   } catch (e) {
