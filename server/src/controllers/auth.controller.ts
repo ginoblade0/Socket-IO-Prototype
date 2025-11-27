@@ -8,7 +8,13 @@ import { ExpressRequest } from "../types/express";
 
 export const checkAuth = (req: ExpressRequest, res: Response) => {
   try {
-    res.status(200).json(req.user);
+    const user = {
+      _id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      avatar: req.user.avatar,
+    };
+    res.status(200).json(user);
   } catch (e) {
     res.status(500).json({
       message: e instanceof Error ? e.message : "An unknown error occurred.",
@@ -47,7 +53,7 @@ export const signup = async (req: Request, res: Response) => {
       await newUser.save();
 
       res.status(201).json({
-        _id: newUser.id,
+        _id: newUser._id,
         username: newUser.username,
         email: newUser.email,
         avatar: newUser.avatar,
@@ -77,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
 
     generateToken(user._id, res);
     res.status(200).json({
-      _id: user.id,
+      _id: user._id,
       username: user.username,
       email: user.email,
       avatar: user.avatar,

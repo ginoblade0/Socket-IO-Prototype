@@ -6,5 +6,6 @@ export const connectDB = async () => {
     console.log(`Connected to: ${con.connection.host}`);
   } catch (error: unknown) {
     console.error(error);
+    process.exitCode = 1;
   }
 };
