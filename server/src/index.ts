@@ -1,17 +1,17 @@
-import express from "express";
 import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-
-import authRouter from "./routes/auth.route";
-import messageRouter from "./routes/message.route";
-
-import { connectDB } from "./lib/db";
-import {app, server} from "./lib/socket"
-
 dotenv.config();
 
+import express, { Request, Response } from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { connectDB } from "./lib/db";
+import { app, server } from "./lib/socket";
+import authRouter from "./routes/auth.route";
+import messageRouter from "./routes/message.route";
+import path from "path";
+
 const PORT = process.env.PORT;
+// const __dirname = path.resolve();
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -27,6 +27,14 @@ app.use(
 
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../client/dist")));
+
+  app.get("/*splat", (_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`Running on port ${PORT}`);

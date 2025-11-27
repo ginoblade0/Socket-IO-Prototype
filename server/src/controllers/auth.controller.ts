@@ -6,6 +6,16 @@ import { generateToken } from "../lib/utils";
 import cloudinary from "../lib/cloudinary";
 import { ExpressRequest } from "../types/express";
 
+export const checkAuth = (req: ExpressRequest, res: Response) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (e) {
+    res.status(500).json({
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
+    });
+  }
+};
+
 export const signup = async (req: Request, res: Response) => {
   const { username, email, password, avatar } = req.body;
   try {
@@ -109,16 +119,6 @@ export const updateAvatar = async (req: ExpressRequest, res: Response) => {
       { new: true }
     );
     res.status(200).json(updatedUser);
-  } catch (e) {
-    res.status(500).json({
-      message: e instanceof Error ? e.message : "An unknown error occurred.",
-    });
-  }
-};
-
-export const checkAuth = (req: ExpressRequest, res: Response) => {
-  try {
-    res.status(200).json(req.user);
   } catch (e) {
     res.status(500).json({
       message: e instanceof Error ? e.message : "An unknown error occurred.",

@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-// Import your User model from Step 1
-import User from "../models/user.model";
-
 dotenv.config();
+
+import mongoose from "mongoose";
+import User from "../models/user.model";
 
 const runMigration = async () => {
   try {
