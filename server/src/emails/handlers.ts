@@ -4,7 +4,7 @@ import { createWelcomeEmailTemplate } from "./template";
 export const sendWelcomeEmail = async (
   email: string,
   name: string,
-  clientURL: string | undefined
+  clientURL: string
 ) => {
   const { data, error } = await resendCLient.emails.send({
     from: `${sender.name} <${sender.email}>`,
@@ -14,8 +14,7 @@ export const sendWelcomeEmail = async (
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw error;
   }
-
   console.log("Email sent.", data);
 };
