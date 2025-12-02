@@ -5,6 +5,7 @@ import User from "../models/user.model";
 import { generateToken } from "../lib/utils";
 import cloudinary from "../lib/cloudinary";
 import { ExpressRequest } from "../types/express";
+import { sendWelcomeEmail } from "../emails/handlers";
 
 export const checkAuth = (req: ExpressRequest, res: Response) => {
   try {
@@ -52,6 +53,16 @@ export const signup = async (req: Request, res: Response) => {
       generateToken(newUser._id, res);
       await newUser.save();
 
+      try {
+        await sendWelcomeEmail(
+          newUser.email,
+          newUser.username,
+          process.env.CLIENT_URL || ""
+        );
+      } catch (error) {
+        console.error("Failed to send welcome email: ", error);
+      }
+
       res.status(201).json({
         _id: newUser._id,
         username: newUser.username,
@@ -95,7 +106,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = (req: Request, res: Response) => {
+export const logout = (_req: Request, res: Response) => {
   try {
     res.clearCookie("token");
     res.status(200).json({ message: "Logged out successfully." });
