@@ -1,16 +1,18 @@
 import { Router } from "express";
-
+import { limiter } from "../middleware/limiter.middleware";
 import { protectRoute } from "../middleware/auth.middleware";
 import {
-  getUsersForSidebar,
+  getAllContacts,
+  getChats,
   getMessages,
   sendMessages,
 } from "../controllers/message.controller";
 
 const router = Router();
-
-router.get("/users", protectRoute, getUsersForSidebar);
-router.get("/:id", protectRoute, getMessages);
-router.post("/send/:id", protectRoute, sendMessages);
+router.use(limiter, protectRoute);
+router.get("/contacts", getAllContacts);
+router.get("/chats", getChats);
+router.get("/:id", getMessages);
+router.post("/send/:id", sendMessages);
 
 export default router;

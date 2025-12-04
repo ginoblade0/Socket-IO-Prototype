@@ -4,11 +4,11 @@ dotenv.config();
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
 import { connectDB } from "./lib/db";
 import { app, server } from "./lib/socket";
 import authRouter from "./routes/auth.route";
 import messageRouter from "./routes/message.route";
-import path from "path";
 
 const PORT = process.env.PORT;
 // const __dirname = path.resolve();

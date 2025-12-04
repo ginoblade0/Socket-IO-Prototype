@@ -1,18 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.model";
 import Message from "../models/message.model";
-import { ExpressRequest } from "../types/express";
+import { Request } from "../types/express";
 import { io, getReceiverSocketId } from "../lib/socket";
 
-export const getUsersForSidebar = async (
-  req: ExpressRequest,
-  res: Response
-) => {
+export const getAllContacts = async (req: Request, res: Response) => {
   try {
     const loggedInUserId = req.user._id;
-
     const filteredUsers = await User.find({
       _id: { $ne: loggedInUserId },
     }).select("-password");
@@ -25,7 +21,34 @@ export const getUsersForSidebar = async (
   }
 };
 
-export const getMessages = async (req: ExpressRequest, res: Response) => {
+export const getChats = async (req: Request, res: Response) => {
+  try {
+    const loggedInUserId = req.user._id;
+
+    const messages = await Message.find({
+      $or: [{ sender: loggedInUserId }, { recipient: loggedInUserId }],
+    }).sort({ createdAt: 1 });
+
+    const userIds = [
+      ...new Set(
+        messages.map((msg) =>
+          msg.sender.toString() === loggedInUserId.toString() ? msg.recipient : msg.sender
+        )
+      ),
+    ];
+    const users = await User.find({ _id: { $in: userIds } }).select(
+      "-password"
+    );
+
+    res.status(200).json(users);
+  } catch (e) {
+    res.status(500).json({
+      message: e instanceof Error ? e.message : "An unknown error occurred.",
+    });
+  }
+};
+
+export const getMessages = async (req: Request, res: Response) => {
   try {
     const loggedInUserId = req.user._id;
     const recipientId = req.params.id;
@@ -45,7 +68,7 @@ export const getMessages = async (req: ExpressRequest, res: Response) => {
   }
 };
 
-export const sendMessages = async (req: ExpressRequest, res: Response) => {
+export const sendMessages = async (req: Request, res: Response) => {
   try {
     const loggedInUserId = req.user._id;
     const recipientId = req.params.id;
