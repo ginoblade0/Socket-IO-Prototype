@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { CookieOptions, Response } from "express";
 import bcrypt from "bcryptjs";
 
 import User from "../models/user.model";
 import { generateToken } from "../lib/utils";
 import cloudinary from "../lib/cloudinary";
-import { ExpressRequest } from "../types/express";
+import { Request } from "../types/express";
 import { sendWelcomeEmail } from "../emails/handlers";
 
-export const checkAuth = (req: ExpressRequest, res: Response) => {
+export const checkAuth = (req: Request, res: Response) => {
   try {
     const user = {
       _id: req.user._id,
@@ -81,6 +81,13 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
+  }
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -108,7 +115,14 @@ export const login = async (req: Request, res: Response) => {
 
 export const logout = (_req: Request, res: Response) => {
   try {
-    res.clearCookie("token");
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "dev",
+      path: "/",
+    };
+
+    res.clearCookie("token", cookieOptions);
     res.status(200).json({ message: "Logged out successfully." });
   } catch (e) {
     res.status(500).json({
@@ -117,7 +131,7 @@ export const logout = (_req: Request, res: Response) => {
   }
 };
 
-export const updateAvatar = async (req: ExpressRequest, res: Response) => {
+export const updateAvatar = async (req: Request, res: Response) => {
   try {
     const { avatar } = req.body;
     if (!avatar) {
@@ -134,7 +148,7 @@ export const updateAvatar = async (req: ExpressRequest, res: Response) => {
       userId,
       { avatar: uploadResponse.secure_url },
       { new: true }
-    );
+    ).select("-password");
     res.status(200).json(updatedUser);
   } catch (e) {
     res.status(500).json({

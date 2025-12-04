@@ -1,5 +1,5 @@
-import { Request } from "express";
+import express from "express";
 
-export interface ExpressRequest extends Request {
+export interface Request extends express.Request {
   user?: any;
 }

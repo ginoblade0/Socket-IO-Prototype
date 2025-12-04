@@ -6,10 +6,11 @@ import {
   logout,
   updateAvatar,
 } from "../controllers/auth.controller";
+import { limiter } from "../middleware/limiter.middleware";
 import { protectRoute } from "../middleware/auth.middleware";
 
 const router = Router();
-
+router.use(limiter);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
