@@ -32,11 +32,10 @@ export const getChats = async (req: Request, res: Response) => {
     const userIds = [
       ...new Set(
         messages.map((msg) =>
-          msg.sender == loggedInUserId.toString() ? msg.recipient : msg.sender
+          msg.sender.toString() === loggedInUserId.toString() ? msg.recipient : msg.sender
         )
       ),
     ];
-
     const users = await User.find({ _id: { $in: userIds } }).select(
       "-password"
     );
