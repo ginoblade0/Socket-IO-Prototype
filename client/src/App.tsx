@@ -12,7 +12,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 
 const App = () => {
-  const { isAuthenticated, checkAuth, isCheckingAuth } = useAuthStore();
+  const { isAuthenticated, isCheckingAuth, checkAuth } = useAuthStore();
   const { theme } = useThemeStore();
 
   useEffect(() => {

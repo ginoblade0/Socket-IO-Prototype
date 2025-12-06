@@ -4,7 +4,7 @@ const messageSchema = new Schema(
   {
     sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
     recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    text: { type: String },
+    text: { type: String, trim: true, maxlength: 2000 },
     image: { type: String },
     // read: { type: Boolean, default: false },
   },

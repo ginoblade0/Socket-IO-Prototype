@@ -32,7 +32,9 @@ export const getChats = async (req: Request, res: Response) => {
     const userIds = [
       ...new Set(
         messages.map((msg) =>
-          msg.sender.toString() === loggedInUserId.toString() ? msg.recipient : msg.sender
+          msg.sender.toString() === loggedInUserId.toString()
+            ? msg.recipient
+            : msg.sender
         )
       ),
     ];
@@ -73,6 +75,19 @@ export const sendMessages = async (req: Request, res: Response) => {
     const loggedInUserId = req.user._id;
     const recipientId = req.params.id;
     const { text, image } = req.body;
+
+    if (!text && !image) {
+      return res.status(400).json({ message: "Text or image is required." });
+    }
+    if (loggedInUserId.equals(recipientId)) {
+      return res
+        .status(400)
+        .json({ message: "Cannot send messages to yourself." });
+    }
+    const receiverExists = await User.exists({ _id: recipientId });
+    if (!receiverExists) {
+      return res.status(404).json({ message: "Receiver not found." });
+    }
 
     let imageUrl = "";
     if (image) {
