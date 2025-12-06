@@ -5,21 +5,21 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
-  const { users, selectedUser, isUsersLoading, getUsers, setSelectedUser } =
+  const { contacts, selectedUser, isContactsLoading, getContacts, setSelectedUser } =
     useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+    getContacts();
+  }, [getContacts]);
 
   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+    ? contacts.filter((contact) => onlineUsers.includes(contact._id))
+    : contacts;
 
-  if (isUsersLoading) return <SidebarSkeleton />;
+  if (isContactsLoading) return <SidebarSkeleton />;
 
   return (
     <aside
@@ -85,7 +85,7 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-4">No online contacts</div>
         )}
       </div>
     </aside>

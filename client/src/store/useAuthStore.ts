@@ -1,30 +1,12 @@
 import { create } from "zustand";
-import { axiosInstance } from "../lib/axios";
+import { io } from "socket.io-client";
 import toast from "react-hot-toast";
-
-import type { AuthUser } from "../types/auth-user";
+import { axiosInstance } from "../lib/axios";
 import type { LoginData, SignUpData } from "../types/form-data";
-import { io, type Socket } from "socket.io-client";
+import type { AuthState } from "../types/auth-state";
 
-const BASE_URL: string = "http://localhost:3000";
-
-interface AuthState {
-  authUser: AuthUser;
-  isAuthenticated: boolean;
-  isSigningUp: boolean;
-  isLoggingIn: boolean;
-  isUpdatingProfile: boolean;
-  isCheckingAuth: boolean;
-  onlineUsers: string[];
-  socket: Socket | null;
-  checkAuth: () => Promise<void>;
-  signup: (data: SignUpData) => Promise<void>;
-  login: (data: LoginData) => Promise<void>;
-  logout: () => Promise<void>;
-  updateAvatar: (data: string) => Promise<void>;
-  connectSocket: () => void;
-  disconnectSocket: () => void;
-}
+const BASE_URL: string =
+  import.meta.env.MODE === "development" ? "http://localhost:3000/api" : "/api";
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
   authUser: {

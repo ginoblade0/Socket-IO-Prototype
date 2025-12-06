@@ -4,37 +4,50 @@ import { axiosInstance } from "../lib/axios";
 import type { Contact } from "../types/auth-user";
 import type { MessageData } from "../types/message-data";
 import { useAuthStore } from "./useAuthStore";
-
-interface ChatState {
-  messages: any[];
-  users: Contact[];
-  selectedUser: Contact | null;
-  isUsersLoading: boolean;
-  isMessagesLoading: boolean;
-  getUsers: () => Promise<void>;
-  getMessages: (userId: string) => Promise<void>;
-  sendMessage: (messageData: MessageData) => Promise<void>;
-  setSelectedUser: (selectedUser: Contact | null) => void;
-  subscribeToMessages: () => void;
-  unsubscribeFromMessages: () => void;
-}
+import type { ChatState } from "../types/chat-state";
 
 export const useChatStore = create<ChatState>()((set, get) => ({
+  contacts: [],
+  chats: [],
   messages: [],
-  users: [],
+  activeTab: "chats",
   selectedUser: null,
-  isUsersLoading: false,
+  isContactsLoading: false,
   isMessagesLoading: false,
+  isSoundEnabled:
+    localStorage.getItem("isSoundEnabled") === "yes" ? true : false,
 
-  getUsers: async () => {
-    set({ isUsersLoading: true });
+  toggleSound: () => {
+    const toggle = get().isSoundEnabled;
+    localStorage.setItem("isSoundEnabled", toggle === true ? "" : "yes");
+    set({ isSoundEnabled: toggle === true ? false : true });
+  },
+
+  setActiveTab: (tab: string) => set({ activeTab: tab }),
+
+  setSelectedUser: (selectedUser: Contact | null) => set({ selectedUser }),
+
+  getContacts: async () => {
+    set({ isContactsLoading: true });
     try {
-      const res = await axiosInstance.get("/messages/users");
-      set({ users: res.data });
+      const res = await axiosInstance.get("/messages/contacts");
+      set({ contacts: res.data });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load Users.");
     } finally {
-      set({ isUsersLoading: false });
+      set({ isContactsLoading: false });
+    }
+  },
+
+  getChats: async () => {
+    set({ isContactsLoading: true });
+    try {
+      const res = await axiosInstance.get("/messages/chats");
+      set({ contacts: res.data });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to load Users.");
+    } finally {
+      set({ isContactsLoading: false });
     }
   },
 
@@ -84,6 +97,4 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     const socket = useAuthStore.getState().socket;
     if (socket) socket.off("newMessage");
   },
-
-  setSelectedUser: (selectedUser: Contact | null) => set({ selectedUser }),
 }));

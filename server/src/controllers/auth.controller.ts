@@ -118,7 +118,7 @@ export const logout = (_req: Request, res: Response) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       sameSite: "strict",
-      secure: process.env.NODE_ENV !== "dev",
+      secure: process.env.NODE_ENV !== "development",
       path: "/",
     };
 
