@@ -3,7 +3,7 @@ import type { AuthUser } from "./auth-user";
 import type { LoginData, SignUpData } from "../types/form-data";
 
 export interface AuthState {
-  authUser: AuthUser;
+  authUser: AuthUser | null;
   isAuthenticated: boolean;
   isSigningUp: boolean;
   isLoggingIn: boolean;

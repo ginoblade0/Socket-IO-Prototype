@@ -33,19 +33,18 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       const res = await axiosInstance.get("/messages/contacts");
       set({ contacts: res.data });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to load Users.");
+      toast.error(e instanceof Error ? e.message : "Failed to load contacts.");
     } finally {
       set({ isContactsLoading: false });
     }
   },
-
   getChats: async () => {
     set({ isContactsLoading: true });
     try {
       const res = await axiosInstance.get("/messages/chats");
-      set({ contacts: res.data });
+      set({ chats: res.data });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to load Users.");
+      toast.error(e instanceof Error ? e.message : "Failed to load chats.");
     } finally {
       set({ isContactsLoading: false });
     }

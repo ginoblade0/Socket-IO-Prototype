@@ -46,8 +46,6 @@ const ChatContainer = () => {
     );
   }
 
-  console.log(messages);
-
   return (
     <div className="flex flex-1 flex-col overflow-auto">
       <ChatHeader />
@@ -56,7 +54,7 @@ const ChatContainer = () => {
           <div
             key={message._id}
             className={`chat ${
-              message.sender === authUser._id ? "chat-end" : "chat-start"
+              message.sender === authUser?._id ? "chat-end" : "chat-start"
             }`}
             ref={messageEndRef}
           >
@@ -64,8 +62,8 @@ const ChatContainer = () => {
               <div className="size-10 rounded-full border">
                 <img
                   src={
-                    message.sender === authUser._id
-                      ? authUser.avatar || "/avatar.png"
+                    message.sender === authUser?._id
+                      ? authUser?.avatar || "/avatar.png"
                       : selectedUser?.avatar || "/avatar.png"
                   }
                   alt="profile pic"

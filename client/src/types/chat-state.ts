@@ -1,10 +1,10 @@
 import type { Contact } from "./auth-user";
-import type { MessageData } from "./message-data";
+import type { Message, MessageData } from "./message-data";
 
 export interface ChatState {
   contacts: Contact[];
   chats: Contact[];
-  messages: any[];
+  messages: Message[];
   activeTab: string;
   selectedUser: Contact | null;
   isContactsLoading: boolean;
