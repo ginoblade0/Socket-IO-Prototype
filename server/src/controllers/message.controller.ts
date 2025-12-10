@@ -38,9 +38,18 @@ export const getChats = async (req: Request, res: Response) => {
         )
       ),
     ];
+
     const users = await User.find({ _id: { $in: userIds } }).select(
       "-password"
     );
+
+    const orderMap: Record<string, number> = {};
+    userIds.forEach((id, index) => {
+      orderMap[id.toString()] = index;
+    });
+    users.sort((a, b) => {
+      return orderMap[b.id] - orderMap[a.id];
+    });
 
     res.status(200).json(users);
   } catch (e) {

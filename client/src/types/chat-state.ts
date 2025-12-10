@@ -6,12 +6,14 @@ export interface ChatState {
   chats: Contact[];
   messages: Message[];
   activeTab: string;
+  showOnlineOnly: boolean;
   selectedUser: Contact | null;
   isContactsLoading: boolean;
   isMessagesLoading: boolean;
   isSoundEnabled: boolean;
   toggleSound: () => void;
   setActiveTab: (tab: string) => void;
+  setShowOnlineOnly: (toggle: boolean) => void;
   setSelectedUser: (selectedUser: Contact | null) => void;
   getContacts: () => Promise<void>;
   getChats: () => Promise<void>;

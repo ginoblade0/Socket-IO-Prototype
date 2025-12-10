@@ -1,15 +1,22 @@
-import { X } from "lucide-react";
+import { ArrowLeftToLine, Bell, BellOff } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, isSoundEnabled, setSelectedUser, toggleSound } =
+    useChatStore();
   const { onlineUsers } = useAuthStore();
 
   if (!selectedUser) return null;
   return (
     <div className="p-2.5 border-b border-base-300">
-      <div className="flex items-center justify-between">
+      <div className="flex gap-4">
+        <button
+          className="text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
+          onClick={() => setSelectedUser(null)}
+        >
+          <ArrowLeftToLine />
+        </button>
         <div className="flex items-center gap-3">
           <div className="avatar">
             <div className="size-10 rounded-full relative">
@@ -26,8 +33,11 @@ const ChatHeader = () => {
             </p>
           </div>
         </div>
-        <button onClick={() => setSelectedUser(null)}>
-          <X />
+        <button
+          className="text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
+          onClick={() => toggleSound()}
+        >
+          {isSoundEnabled ? <Bell /> : <BellOff />}
         </button>
       </div>
     </div>
