@@ -10,20 +10,23 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   contacts: [],
   chats: [],
   messages: [],
-  activeTab: "chats",
+  activeTab: "recent",
+  showOnlineOnly: false,
   selectedUser: null,
   isContactsLoading: false,
   isMessagesLoading: false,
-  isSoundEnabled:
-    localStorage.getItem("isSoundEnabled") === "yes" ? true : false,
+  isSoundEnabled: localStorage.getItem("chat-sound") === "on" ? true : false,
 
   toggleSound: () => {
     const toggle = get().isSoundEnabled;
-    localStorage.setItem("isSoundEnabled", toggle === true ? "" : "yes");
+    localStorage.setItem("chat-sound", toggle === true ? "off" : "on");
     set({ isSoundEnabled: toggle === true ? false : true });
+    console.log(get().isSoundEnabled);
   },
 
   setActiveTab: (tab: string) => set({ activeTab: tab }),
+
+  setShowOnlineOnly: (toggle: boolean) => set({ showOnlineOnly: toggle }),
 
   setSelectedUser: (selectedUser: Contact | null) => set({ selectedUser }),
 
@@ -38,6 +41,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       set({ isContactsLoading: false });
     }
   },
+  
   getChats: async () => {
     set({ isContactsLoading: true });
     try {
