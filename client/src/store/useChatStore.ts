@@ -119,10 +119,11 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     const socket = useAuthStore.getState().socket;
     if (socket) {
       socket.on("newUnreadMessage", () => {
+        // TODO: Handle unread message notification (e.g., update unread count, refresh chat list)
       });
     }
   },
-
+  
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (socket) {

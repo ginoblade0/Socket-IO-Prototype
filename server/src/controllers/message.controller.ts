@@ -29,20 +29,36 @@ export const getChats = async (req: Request, res: Response) => {
       $or: [{ sender: loggedInUserId }, { recipient: loggedInUserId }],
     }).sort({ createdAt: 1 });
 
-    const lastMessages = [
-      ...new Set(
-        messages.map((msg) => ({
-          _id:
-            msg.sender.toString() === loggedInUserId.toString()
-              ? msg.recipient
-              : msg.sender,
-          lastMsg: msg.text !== "" ? msg.text : msg.image,
-          isSender:
-            msg.sender.toString() === loggedInUserId.toString() ? false : true,
-          createdAt: msg.createdAt,
-        }))
-      ),
-    ];
+    // const lastMessages = [
+    //   ...new Set(
+    //     messages.map((msg) => ({
+    //       _id:
+    //         msg.sender.toString() === loggedInUserId.toString()
+    //           ? msg.recipient
+    //           : msg.sender,
+    //       lastMsg: msg.text !== "" ? msg.text : msg.image,
+    //       isSender:
+    //         msg.sender.toString() === loggedInUserId.toString() ? false : true,
+    //       createdAt: msg.createdAt,
+    //     }))
+    //   ),
+    // ];
+
+    const lastMessagesMap = new Map();
+    messages.forEach((msg) => {
+      const userId =
+        msg.sender.toString() === loggedInUserId.toString()
+          ? msg.recipient
+          : msg.sender;
+      lastMessagesMap.set(userId.toString(), {
+        _id: userId,
+        lastMsg: msg.text !== "" ? msg.text : msg.image,
+        isSender:
+          msg.sender.toString() === loggedInUserId.toString() ? false : true,
+        createdAt: msg.createdAt,
+      });
+    });
+    const lastMessages = Array.from(lastMessagesMap.values());
 
     const users = await User.find({ _id: { $in: lastMessages } }).select(
       "-password"
