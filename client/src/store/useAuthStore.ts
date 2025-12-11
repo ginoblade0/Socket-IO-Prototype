@@ -6,7 +6,7 @@ import type { LoginData, SignUpData } from "../types/form-data";
 import type { AuthState } from "../types/auth-state";
 
 const BASE_URL: string =
-  import.meta.env.MODE === "development" ? "http://localhost:3000/api" : "/api";
+  import.meta.env.MODE === "development" ? "http://localhost:3000/" : "/";
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
   authUser: {
