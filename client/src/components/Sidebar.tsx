@@ -8,12 +8,15 @@ import ChatContactsTab from "./ChatContactsTab";
 
 const Sidebar = () => {
   const {
+    refreshKey,
     activeTab,
     showOnlineOnly,
     isContactsLoading,
     setShowOnlineOnly,
     getContacts,
     getChats,
+    subscribeToMessages,
+    unsubscribeFromMessages,
   } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
@@ -21,7 +24,15 @@ const Sidebar = () => {
   useEffect(() => {
     getContacts();
     getChats();
-  }, [getContacts, getChats]);
+    subscribeToMessages();
+    return () => unsubscribeFromMessages();
+  }, [
+    refreshKey,
+    getContacts,
+    getChats,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
   if (isContactsLoading) return <SidebarSkeleton />;
   return (

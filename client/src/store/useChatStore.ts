@@ -7,6 +7,7 @@ import { useAuthStore } from "./useAuthStore";
 import type { ChatState } from "../types/chat-state";
 
 export const useChatStore = create<ChatState>()((set, get) => ({
+  refreshKey: 0,
   contacts: [],
   chats: [],
   messages: [],
@@ -17,13 +18,22 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   isMessagesLoading: false,
   isSoundEnabled: localStorage.getItem("chat-sound") === "on" ? true : false,
 
+  refreshRecentChat: () => {
+    set({ refreshKey: get().refreshKey + 1 });
+  },
+
   toggleSound: () => {
     const toggle = get().isSoundEnabled;
     localStorage.setItem("chat-sound", toggle === true ? "off" : "on");
     set({ isSoundEnabled: toggle === true ? false : true });
   },
 
-  setActiveTab: (tab: string) => set({ activeTab: tab }),
+  setActiveTab: (tab: string) => {
+    set({ activeTab: tab });
+    if (tab === "recent") {
+      get().refreshRecentChat();
+    }
+  },
 
   setShowOnlineOnly: (toggle: boolean) => set({ showOnlineOnly: toggle }),
 
@@ -40,7 +50,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       set({ isContactsLoading: false });
     }
   },
-  
+
   getChats: async () => {
     set({ isContactsLoading: true });
     try {
@@ -77,12 +87,15 @@ export const useChatStore = create<ChatState>()((set, get) => ({
         messageData
       );
       set({ messages: [...messages, res.data] });
+      if (get().activeTab === "recent") {
+        get().refreshRecentChat();
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to send message.");
     }
   },
 
-  subscribeToMessages: () => {
+  subscribeToUser: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
 
@@ -95,8 +108,25 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     }
   },
 
+  unsubscribeFromUser: () => {
+    const socket = useAuthStore.getState().socket;
+    if (socket) {
+      socket.off("newMessage");
+    }
+  },
+
+  subscribeToMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    if (socket) {
+      socket.on("newUnreadMessage", () => {
+      });
+    }
+  },
+
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    if (socket) socket.off("newMessage");
+    if (socket) {
+      socket.off("newUnreadMessage");
+    }
   },
 }));

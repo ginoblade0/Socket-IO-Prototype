@@ -29,29 +29,51 @@ export const getChats = async (req: Request, res: Response) => {
       $or: [{ sender: loggedInUserId }, { recipient: loggedInUserId }],
     }).sort({ createdAt: 1 });
 
-    const userIds = [
+    const lastMessages = [
       ...new Set(
-        messages.map((msg) =>
-          msg.sender.toString() === loggedInUserId.toString()
-            ? msg.recipient
-            : msg.sender
-        )
+        messages.map((msg) => ({
+          _id:
+            msg.sender.toString() === loggedInUserId.toString()
+              ? msg.recipient
+              : msg.sender,
+          lastMsg: msg.text !== "" ? msg.text : msg.image,
+          isSender:
+            msg.sender.toString() === loggedInUserId.toString() ? false : true,
+          createdAt: msg.createdAt,
+        }))
       ),
     ];
 
-    const users = await User.find({ _id: { $in: userIds } }).select(
+    const users = await User.find({ _id: { $in: lastMessages } }).select(
       "-password"
     );
 
-    const orderMap: Record<string, number> = {};
-    userIds.forEach((id, index) => {
-      orderMap[id.toString()] = index;
-    });
-    users.sort((a, b) => {
-      return orderMap[b.id] - orderMap[a.id];
+    const result = users.map((item1) => {
+      const lastMessage = lastMessages.findLast(
+        (item2) => item2._id.toString() === item1._id.toString()
+      );
+      if (lastMessage) {
+        return {
+          _id: item1._id,
+          username: item1.username,
+          email: item1.email,
+          avatar: item1.avatar,
+          lastMsg: lastMessage.lastMsg,
+          isSender: lastMessage.isSender,
+          createdAt: lastMessage.createdAt,
+        };
+      } else {
+        return item1;
+      }
     });
 
-    res.status(200).json(users);
+    result.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    res.status(200).json(result);
   } catch (e) {
     res.status(500).json({
       message: e instanceof Error ? e.message : "An unknown error occurred.",
@@ -116,6 +138,7 @@ export const sendMessages = async (req: Request, res: Response) => {
     const receiverSocketId = getReceiverSocketId(recipientId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
+      io.to(receiverSocketId).emit("newUnreadMessage");
     }
 
     res.status(201).json(newMessage);

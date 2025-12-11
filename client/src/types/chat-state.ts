@@ -2,6 +2,7 @@ import type { Contact } from "./auth-user";
 import type { Message, MessageData } from "./message-data";
 
 export interface ChatState {
+  refreshKey: number;
   contacts: Contact[];
   chats: Contact[];
   messages: Message[];
@@ -11,6 +12,7 @@ export interface ChatState {
   isContactsLoading: boolean;
   isMessagesLoading: boolean;
   isSoundEnabled: boolean;
+  refreshRecentChat: () => void;
   toggleSound: () => void;
   setActiveTab: (tab: string) => void;
   setShowOnlineOnly: (toggle: boolean) => void;
@@ -19,6 +21,8 @@ export interface ChatState {
   getChats: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
   sendMessage: (messageData: MessageData) => Promise<void>;
+  subscribeToUser: () => void;
+  unsubscribeFromUser: () => void;
   subscribeToMessages: () => void;
   unsubscribeFromMessages: () => void;
 }
