@@ -1,6 +1,6 @@
 import { useChatStore } from "../store/useChatStore";
 
-const ChatContactsTab = () => {
+const SidebarTabs = () => {
   const { activeTab, setActiveTab } = useChatStore();
 
   const getActiveTab = (e: string) => {
@@ -27,4 +27,4 @@ const ChatContactsTab = () => {
   );
 };
 
-export default ChatContactsTab;
+export default SidebarTabs;

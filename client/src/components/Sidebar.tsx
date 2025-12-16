@@ -4,7 +4,7 @@ import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import ContactList from "./ContactList";
-import ChatContactsTab from "./ChatContactsTab";
+import SidebarTabs from "./SidebarTabs";
 
 const Sidebar = () => {
   const {
@@ -34,6 +34,8 @@ const Sidebar = () => {
     unsubscribeFromMessages,
   ]);
 
+  // [TODO] Update sidebar skeleton size (only users should be loading)
+
   if (isContactsLoading) return <SidebarSkeleton />;
   return (
     <aside
@@ -56,12 +58,12 @@ const Sidebar = () => {
             <span className="text-sm">Show online</span>
           </label>
           <span className="text-xs text-zinc-500">
-            ({onlineUsers.length} online)
+            ({onlineUsers.length - 1} online)
           </span>
         </div>
       </div>
 
-      <ChatContactsTab />
+      <SidebarTabs />
       <ContactList currentTab={`${activeTab}`} />
     </aside>
   );
