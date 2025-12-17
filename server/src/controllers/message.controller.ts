@@ -29,21 +29,6 @@ export const getChats = async (req: Request, res: Response) => {
       $or: [{ sender: loggedInUserId }, { recipient: loggedInUserId }],
     }).sort({ createdAt: 1 });
 
-    // const lastMessages = [
-    //   ...new Set(
-    //     messages.map((msg) => ({
-    //       _id:
-    //         msg.sender.toString() === loggedInUserId.toString()
-    //           ? msg.recipient
-    //           : msg.sender,
-    //       lastMsg: msg.text !== "" ? msg.text : msg.image,
-    //       isSender:
-    //         msg.sender.toString() === loggedInUserId.toString() ? false : true,
-    //       createdAt: msg.createdAt,
-    //     }))
-    //   ),
-    // ];
-
     const lastMessagesMap = new Map();
     messages.forEach((msg) => {
       const userId =
@@ -52,7 +37,7 @@ export const getChats = async (req: Request, res: Response) => {
           : msg.sender;
       lastMessagesMap.set(userId.toString(), {
         _id: userId,
-        lastMsg: msg.text !== "" ? msg.text : msg.image,
+        lastMsg: msg.text !== "" ? msg.text : msg.image || "",
         isSender:
           msg.sender.toString() === loggedInUserId.toString() ? false : true,
         createdAt: msg.createdAt,
@@ -64,23 +49,19 @@ export const getChats = async (req: Request, res: Response) => {
       "-password"
     );
 
-    const result = users.map((item1) => {
+    const result = users.map((user) => {
       const lastMessage = lastMessages.findLast(
-        (item2) => item2._id.toString() === item1._id.toString()
+        (msg) => msg._id.toString() === user._id.toString()
       );
-      if (lastMessage) {
-        return {
-          _id: item1._id,
-          username: item1.username,
-          email: item1.email,
-          avatar: item1.avatar,
-          lastMsg: lastMessage.lastMsg,
-          isSender: lastMessage.isSender,
-          createdAt: lastMessage.createdAt,
-        };
-      } else {
-        return item1;
-      }
+      return {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        lastMsg: lastMessage.lastMsg,
+        isSender: lastMessage.isSender,
+        createdAt: lastMessage.createdAt,
+      };
     });
 
     result.sort((a, b) => {
