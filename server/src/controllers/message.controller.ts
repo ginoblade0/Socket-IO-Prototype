@@ -3,17 +3,51 @@ import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.model";
 import Message from "../models/message.model";
+import ContactSettings from "../models/contact-settings.model";
 import { Request } from "../types/express";
 import { io, getReceiverSocketId } from "../lib/socket";
 
 export const getAllContacts = async (req: Request, res: Response) => {
   try {
+    // const loggedInUserId = req.user._id;
+    // const filteredUsers = await User.find({
+    //   _id: { $ne: loggedInUserId },
+    // }).select("-password");
+
+    // const contactIds = filteredUsers.map((user) => user._id);
+
+    // const contactSettings = await ContactSettings.find({
+    //   userId: loggedInUserId,
+    //   contactId: { $in: contactIds },
+    // });
+
+    // console.log(contactSettings);
+
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({
+
+    const users = await User.find({
       _id: { $ne: loggedInUserId },
     }).select("-password");
 
-    res.status(200).json(filteredUsers);
+    const contactSettings = await ContactSettings.find({
+      userId: loggedInUserId,
+      contactId: { $in: users.map((u) => u._id) },
+    });
+
+    const settingsMap = new Map(
+      contactSettings.map((cs) => [cs.contactId.toString(), cs])
+    );
+
+    const contacts = users.map((user) => {
+      const settings = settingsMap.get(user._id.toString());
+      return {
+        ...user.toObject(),
+        isMuted: settings?.isMuted ?? false,
+        nickname: settings?.nickname ?? "",
+      };
+    });
+
+    res.status(200).json(contacts);
   } catch (e) {
     res.status(500).json({
       message: e instanceof Error ? e.message : "An unknown error occurred.",

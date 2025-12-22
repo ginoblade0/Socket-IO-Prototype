@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { BellOff, Search } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import NoRecentChat from "./NoRecentChat";
@@ -44,7 +44,7 @@ const ContactList = ({ currentTab }: ContactListProps) => {
     }
   };
 
-  const previewDetail = (user: Contact) => {
+  const messagePreview = (user: Contact) => {
     if (currentTab === "contacts") {
       return onlineUsers.includes(user._id) ? "Online" : "Offline";
     } else if (currentTab === "recent") {
@@ -92,8 +92,11 @@ const ContactList = ({ currentTab }: ContactListProps) => {
             )}
           </div>
           <div className="hidden lg:block text-left min-w-0">
-            <div className="font-medium">{user.username}</div>
-            <div className="text-sm text-zinc-400">{previewDetail(user)}</div>
+            <div className="font-medium flex items-center gap-1">
+              <span>{user.username}</span>
+              {user.isMuted && <BellOff className="w-4 h-4 opacity-50" />}
+            </div>
+            <div className="text-sm text-zinc-400">{messagePreview(user)}</div>
           </div>
         </button>
       ))}

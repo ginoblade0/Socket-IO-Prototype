@@ -1,10 +1,12 @@
 import { useEffect } from "react";
+import useSound from "use-sound";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import ContactList from "./ContactList";
 import SidebarTabs from "./SidebarTabs";
+import notification from "../assets/sounds/notification.mp3";
 
 const Sidebar = () => {
   const {
@@ -18,13 +20,13 @@ const Sidebar = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-
   const { onlineUsers } = useAuthStore();
+  const [play] = useSound(notification);
 
   useEffect(() => {
     getContacts();
     getChats();
-    subscribeToMessages();
+    subscribeToMessages(play);
     return () => unsubscribeFromMessages();
   }, [
     refreshKey,
@@ -32,6 +34,7 @@ const Sidebar = () => {
     getChats,
     subscribeToMessages,
     unsubscribeFromMessages,
+    play,
   ]);
 
   // [TODO] Update sidebar skeleton size (only users should be loading)

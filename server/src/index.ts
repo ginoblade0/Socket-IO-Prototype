@@ -9,6 +9,7 @@ import { connectDB } from "./lib/db";
 import { app, server } from "./lib/socket";
 import authRouter from "./routes/auth.route";
 import messageRouter from "./routes/message.route";
+import userRouter from "./routes/user.route";
 
 const PORT = process.env.PORT;
 
@@ -24,6 +25,7 @@ app.use(
 
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/users", userRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../client/dist")));

@@ -14,4 +14,6 @@ export interface Contact {
   avatar: string;
   lastMsg: string;
   isSender: boolean;
+  isMuted: boolean;
+  nickname: string;
 }
