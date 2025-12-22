@@ -23,6 +23,6 @@ export interface ChatState {
   sendMessage: (messageData: MessageData) => Promise<void>;
   subscribeToUser: () => void;
   unsubscribeFromUser: () => void;
-  subscribeToMessages: () => void;
+  subscribeToMessages: (play: () => void) => void;
   unsubscribeFromMessages: () => void;
 }

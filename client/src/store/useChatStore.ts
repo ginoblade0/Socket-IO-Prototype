@@ -16,7 +16,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   selectedUser: null,
   isContactsLoading: false,
   isMessagesLoading: false,
-  isSoundEnabled: localStorage.getItem("chat-sound") === "on" ? true : false,
+  isSoundEnabled: true,
 
   refreshRecentChat: () => {
     set({ refreshKey: get().refreshKey + 1 });
@@ -24,7 +24,6 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   toggleSound: () => {
     const toggle = get().isSoundEnabled;
-    localStorage.setItem("chat-sound", toggle === true ? "off" : "on");
     set({ isSoundEnabled: toggle === true ? false : true });
   },
 
@@ -37,7 +36,8 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   setShowOnlineOnly: (toggle: boolean) => set({ showOnlineOnly: toggle }),
 
-  setSelectedUser: (selectedUser: Contact | null) => set({ selectedUser }),
+  setSelectedUser: (selectedUser: Contact | null) =>
+    set({ selectedUser, isSoundEnabled: !selectedUser?.isMuted }),
 
   getContacts: async () => {
     set({ isContactsLoading: true });
@@ -115,15 +115,17 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     }
   },
 
-  subscribeToMessages: () => {
+  subscribeToMessages: (play: () => void) => {
     const socket = useAuthStore.getState().socket;
     if (socket) {
       socket.on("newUnreadMessage", () => {
-        // TODO: Handle unread message notification (e.g., update unread count, refresh chat list)
+        // [TODO]: Handle unread message notification (e.g., update unread count, refresh chat list)
+        // [TODO]: add refresh chat list upon receiving messages without a selected user
+        if (get().isSoundEnabled) play();
       });
     }
   },
-  
+
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (socket) {

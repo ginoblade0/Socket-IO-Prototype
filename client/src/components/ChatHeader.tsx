@@ -1,11 +1,18 @@
 import { ArrowLeftToLine, Bell, BellOff } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { useContactStore } from "../store/useContactStore";
 
 const ChatHeader = () => {
+  const { onlineUsers } = useAuthStore();
   const { selectedUser, isSoundEnabled, setSelectedUser, toggleSound } =
     useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { updateContactSettings } = useContactStore();
+
+  const handleToggleSound = () => {
+    toggleSound();
+    updateContactSettings();
+  };
 
   if (!selectedUser) return null;
   return (
@@ -35,7 +42,7 @@ const ChatHeader = () => {
         </div>
         <button
           className="text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
-          onClick={() => toggleSound()}
+          onClick={handleToggleSound}
         >
           {isSoundEnabled ? <Bell /> : <BellOff />}
         </button>
