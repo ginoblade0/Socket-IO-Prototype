@@ -24,7 +24,6 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   toggleSound: () => {
     const toggle = get().isSoundEnabled;
-    localStorage.setItem("chat-sound", toggle === true ? "off" : "on");
     set({ isSoundEnabled: toggle === true ? false : true });
   },
 
@@ -121,7 +120,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     if (socket) {
       socket.on("newUnreadMessage", () => {
         // [TODO]: Handle unread message notification (e.g., update unread count, refresh chat list)
-        // [TODO]: add refresh chat list upon recieving messages without a selected user
+        // [TODO]: add refresh chat list upon receiving messages without a selected user
         if (get().isSoundEnabled) play();
       });
     }

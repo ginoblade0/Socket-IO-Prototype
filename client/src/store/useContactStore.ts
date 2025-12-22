@@ -6,6 +6,7 @@ import type { ContactState } from "../types/contact-state";
 
 export const useContactStore = create<ContactState>()((set, get) => ({
   updateContactSettings: async () => {
+    // [TODO] add to params^ updateContactSettings(contactId, isSoundEnabled)
     const contactId = useChatStore.getState().selectedUser?._id;
     const isSoundEnabled = useChatStore.getState().isSoundEnabled;
 

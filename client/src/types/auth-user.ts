@@ -15,5 +15,5 @@ export interface Contact {
   lastMsg: string;
   isSender: boolean;
   isMuted: boolean;
-  nickname: string;
+  nickname?: string;
 }
